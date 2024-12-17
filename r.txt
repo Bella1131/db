@@ -1,0 +1,215 @@
+K-MEANS
+install.packages("ggplot2")
+install.packages("cluster")
+library(ggplot2)
+library(cluster)
+set.seed(123)
+data <- data.frame(
+  x = rnorm(100, mean = 0),
+  y = rnorm(100, mean = 0)
+)
+kmeans_result <- kmeans(data, centers = 3)
+data$cluster <- as.factor(kmeans_result$cluster)
+ggplot(data, aes(x, y, color = cluster)) +
+  geom_point() +
+  geom_point(data = as.data.frame(kmeans_result$centers), aes(x, y), color = "black", size = 4, shape = 4)
+
+AGGLOMERATIVE 
+install.packages("ggplot2")
+install.packages("cluster")
+library(ggplot2)
+library(cluster)
+set.seed(123)
+data <- data.frame(
+  x = rnorm(100, mean = 0),
+  y = rnorm(100, mean = 0)
+)
+hclust_result <- hclust(dist(data))
+cut_tree_result <- cutree(hclust_result, k = 3)
+data$cluster <- as.factor(cut_tree_result)
+ggplot(data, aes(x, y, color = cluster)) + geom_point()
+
+C4.5
+install.packages("RWeka")  
+library(RWeka)
+data(iris)
+set.seed(123)  # For reproducibility
+sample_index <- sample(1:nrow(iris), 0.8 * nrow(iris))
+train_data <- iris[sample_index, ]
+test_data <- iris[-sample_index, ]
+c45_model <- J48(Species ~ ., data = train_data)
+print(c45_model)
+predictions <- predict(c45_model, test_data)
+confusion_matrix <- table(Predicted = predictions, Actual = test_data$Species)
+print("Confusion Matrix:")
+print(confusion_matrix)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+cat("Accuracy: ", accuracy, "\n")
+
+ID3
+install.packages("rpart")  # Install if not already installed
+library(rpart)
+install.packages("rpart.plot")  # For visualizing the tree
+library(rpart.plot)
+data(iris)
+set.seed(123)  # For reproducibility
+sample_index <- sample(1:nrow(iris), 0.8 * nrow(iris))
+train_data <- iris[sample_index, ]
+test_data <- iris[-sample_index, ]
+id3_model <- rpart(Species ~ ., data = train_data, method = "class")
+rpart.plot(id3_model, type = 4, extra = 1, main = "ID3 Decision Tree")
+predictions <- predict(id3_model, test_data, type = "class")
+confusion_matrix <- table(Predicted = predictions, Actual = test_data$Species)
+print("Confusion Matrix:")
+print(confusion_matrix)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+cat("Accuracy: ", accuracy, "\n")
+
+NAIVE BAYESIAN
+install.packages("e1071")  # Install if not already installed
+library(e1071)
+data(iris)
+set.seed(123)  # For reproducibility
+sample_index <- sample(1:nrow(iris), 0.8 * nrow(iris))
+train_data <- iris[sample_index, ]
+test_data <- iris[-sample_index, ]
+naive_model <- naiveBayes(Species ~ ., data = train_data)
+predictions <- predict(naive_model, test_data)
+confusion_matrix <- table(Predicted = predictions, Actual = test_data$Species)
+print("Confusion Matrix:")
+print(confusion_matrix)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+cat("Accuracy: ", accuracy, "\n")
+
+K-NEAREST NEIGHBOUR
+library(class)
+data(iris)
+normalize <- function(x) {
+  return((x - min(x)) / (max(x) - min(x)))
+}
+iris_normalized <- as.data.frame(lapply(iris[, 1:4], normalize))
+iris_normalized$Species <- iris$Species
+set.seed(123) # For reproducibility
+sample_index <- sample(1:nrow(iris_normalized), 0.8 * nrow(iris_normalized))
+train_data <- iris_normalized[sample_index, ]
+test_data <- iris_normalized[-sample_index, ]
+k <- 3 # Number of neighbors
+predictions <- knn(
+  train = train_data[, -5], # Training features
+  test = test_data[, -5],   # Testing features
+  cl = train_data$Species,  # Training labels
+  k = k                     # Number of neighbors
+)
+confusion_matrix <- table(Predicted = predictions, Actual = test_data$Species)
+print("Confusion Matrix:")
+print(confusion_matrix)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+cat("Accuracy: ", accuracy, "\n")
+
+MBA USING APRIORI
+install.packages("arules")
+library(arules)
+transactions <- list(
+  c("bread", "milk", "eggs"),
+  c("bread", "butter"),
+  c("milk", "butter"),
+  c("bread", "milk", "butter"),
+  c("bread", "milk")
+)
+
+trans <- as(transactions, "transactions")
+rules <- apriori(trans, parameter = list(supp = 0.2, conf = 0.8))
+inspect(rules)
+
+CLASSIFICATION ALGORITHM
+input <- mtcars[,c("am","hp","gear")]
+print(head(input))
+am.data=glm(formula = am ~ hp + gear,data=input,family = binomial)
+print (summary(am.data))
+
+LINEAR REGRESSION
+1.
+install.packages("xlsx")
+library(xlsx)
+ageheight <- read.xlsx("ageandheight.xlsx",sheetName = "linear regression")
+result <- lm(height~age,data=ageheight)
+summary(result)
+2.
+install.packages("xlsx")
+library(xlsx)
+ageheight <- read.xlsx("ageandheight.xlsx",sheetName = "multiple regression")
+result <- lm(height~age+no_of_brothers,data=ageheight)
+summary(result)
+3.
+set.seed(42)
+X <- 2 * runif(100)
+y <- 4 + 3 * X + rnorm(100)
+plot(X, y, col = 'blue', main = 'Linear Regression Data', xlab = 'X', ylab = 'y')
+model <- lm(y ~ X)
+abline(model, col = 'red')
+summary(model)
+
+DATA PRE-PROCESSING
+CREATE CSV FILE
+dataframe <- read.csv("file-prac6.csv")
+print(dataframe)
+names(dataframe)[names(dataframe) == "Name"] <- "FirstName"
+print(dataframe)
+dataframe$emailaddress <- c('Alice@gmail.com', 'Bob@gmail.com', 'Charlie@gmail.com', 'Diana@gmail.com', 'Edward@gmail.com','Jasmine@gmail.com')
+print(dataframe)
+dataframe <- dataframe[complete.cases(dataframe), ]
+print(dataframe)
+dataframe <- read.csv("file-prac6.csv")
+2.CONTINUED FROM 1ST
+dataframe$Age <- ifelse(
+  is.na(dataframe$Age), # Condition: If Age is NA (missing)
+  ave(dataframe$Age, FUN = function(x) mean(x, na.rm = TRUE)), # Calculate mean of non-missing values in Age
+  dataframe$Age # Else, keep the original Age value
+)
+dataframe$Age <- ifelse(
+  is.na(dataframe$Age), # Condition: If Age is NA (missing)
+  ave(dataframe$Age, FUN = function(x) mean(x, na.rm = TRUE)), # Calculate mean of non-missing values in Age
+  dataframe$Age # Else, keep the original Age value
+)
+dataframe$Gender <- as.numeric(factor(dataframe$Gender))
+print(dataframe)
+subset_data <- dataframe[dataframe$Age > 30, ]
+print(subset_data)
+dataframe <- read.csv("file-prac6.csv")
+print(dataframe)
+sample_size <- 5 # Adjust the sample size as needed
+sample_data <- dataframe[sample(nrow(dataframe), sample_size, replace = FALSE), ]
+print(sample_data)
+
+
+R DATATYPES
+1.NUMERIC
+x = 5.6
+print(class(x))
+print(typeof(x))
+print (x)
+2.INTEGER
+x = as.integer(5)
+print(class(x))
+print(typeof(x))
+y = 5L
+print(class(y))
+print(typeof(y))
+3.LOGICAL
+x = 4
+y = 3
+z = x > y
+print(z)
+print(class(z))
+print(type of(z))
+4.COMPLEX
+x = 4 + 3i
+print(class(x))
+print(typeof(x))
+5.CHARACTER
+char = "Mumbai University"
+print(class(char))
+print(type of(char))
+
+
+
